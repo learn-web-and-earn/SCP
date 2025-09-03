@@ -23,7 +23,7 @@ async function registerUser(req, res) {
       email,
       password: hashedPassword
     });
-    
+
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
 
 
@@ -32,13 +32,15 @@ async function registerUser(req, res) {
       secure: true,
       sameSite: "none"
     });
-    
+
     res.status(201).json({
       error: false,
       message: "User registered successfully",
       data: {
+        userId: user._id,
         name: user.name,
-        email: user.email
+        email: user.email,
+        isAdmin: user.isAdmin
       }
     });
   } catch (error) {
@@ -50,4 +52,69 @@ async function registerUser(req, res) {
   }
 }
 
-module.exports = { registerUser };
+async function loginUser(req, res) {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        error: true,
+        message: "Email and password are required"
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({
+        error: true,
+        message: "Invalid email or password"
+      });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        error: true,
+        message: "Invalid email or password"
+      });
+    }
+
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none"
+    });
+
+    res.status(200).json({
+      error: false,
+      message: "User logged in successfully",
+      data: {
+        userId: user._id,
+        name: user.name,
+        email: user.email,
+        isAdmin: user.isAdmin
+      }
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Error registering user"
+    });
+  }
+}
+
+async function logoutUser(req, res) {
+  res.clearCookie("token");
+  res.status(200).json({
+    error: false,
+    message: "User logged out successfully"
+  });
+}
+
+module.exports = { registerUser, loginUser, logoutUser };
