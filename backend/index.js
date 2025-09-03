@@ -1,5 +1,12 @@
-import app from "./app.js";
+const app = require("./src/app.js");
 
-const port = process.env.PORT || 5000;
+const connect = require("./src/db/db.js");
 
-app.listen(port, () => console.log(`Server started on port http://localhost:${port}`));
+
+const port = process.env.PORT || 3001;
+
+connect();
+
+app.listen(port, () => console.log(`Listening on port ${port}`));
+
+
