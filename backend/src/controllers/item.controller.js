@@ -33,9 +33,40 @@ const createItem = async (req, res) => {
 
 };
 
-const getItems = async (req, res) => { };
+const getItems = async (_, res) => {
+  try {
+    const items = await Item.find();
+    res.status(200).json({
+      error: false,
+      message: "Items fetched successfully",
+      items
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: true,
+      message: "Internal server error"
+    })
+  }
+};
 
-const getItem = async (req, res) => { };
+const getItem = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const item = await Item.findById(id);
+    res.status(200).json({
+      error: false,
+      message: "Item fetched successfully",
+      item
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: true,
+      message: "Internal server error"
+    }) 
+  }
+ };
 
 const updateItem = async (req, res) => { };
 

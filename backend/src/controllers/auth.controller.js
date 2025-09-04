@@ -24,7 +24,9 @@ async function registerUser(req, res) {
       password: hashedPassword
     });
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d"
+    });
 
 
     res.cookie("token", token, {
@@ -36,12 +38,13 @@ async function registerUser(req, res) {
     res.status(201).json({
       error: false,
       message: "User registered successfully",
-      data: {
+      user: {
         userId: user._id,
         name: user.name,
         email: user.email,
         isAdmin: user.isAdmin
-      }
+      },
+      token
     });
   } catch (error) {
     console.error(error);
@@ -81,7 +84,7 @@ async function loginUser(req, res) {
       });
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -92,12 +95,13 @@ async function loginUser(req, res) {
     res.status(200).json({
       error: false,
       message: "User logged in successfully",
-      data: {
+      user: {
         userId: user._id,
         name: user.name,
         email: user.email,
         isAdmin: user.isAdmin
-      }
+      },
+      token
     });
 
   } catch (error) {
