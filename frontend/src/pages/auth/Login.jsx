@@ -1,9 +1,12 @@
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { setLoading, setLoggedIn, setToken, setUser } from '@/store/authSlice';
 import { authFetch } from '@/utils/authFetch';
 import React, { useState } from 'react'
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -48,20 +51,36 @@ const Login = () => {
   };
 
   return (
-    <>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email:</label>
-          <input type="email" name="email" value={data.email} onChange={handleChange} />
+    <div className='min-h-[calc(100vh-64px)] flex items-center justify-center p-4'>
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+        <div className='flex flex-col p-8 bg-white rounded-2xl shadow-2xl dark:bg-gray-800'>
+          <div className='mt-4 flex justify-center'>
+            <img src="/Easter Bunny Boy waving.gif" alt="" />
+          </div>
+          <h1 className='text-2xl font-bold mb-4 text-center'>Welcome back! Your next reward is just a clip away</h1>
+          <form onSubmit={handleSubmit}>
+            <div className='flex flex-col gap-2 mb-4'>
+              <Label>Email:</Label>
+              <Input className={"bg-gray-200 dark:bg-gray-700"} type="email" name="email" value={data.email} onChange={handleChange} />
+            </div>
+            <div className='flex flex-col gap-2 mb-4'>
+              <Label>Password:</Label>
+              <Input className={"bg-gray-200 dark:bg-gray-700"} type="password" name="password" value={data.password} onChange={handleChange} />
+            </div>
+            <div className='flex justify-end'>
+              <Button className='w-1/2 self-end bg-blue-600 hover:bg-blue-700 dark:bg-black dark:hover:bg-gray-600 dark:text-white cursor-pointer' type="submit">Login</Button>
+            </div>
+            <div>
+              <p>Don't have an account? <Link className='text-blue-600 hover:underline' to="/register">Sign Up</Link></p>
+            </div>
+
+          </form>
         </div>
-        <div>
-          <label>Password:</label>
-          <input type="password" name="password" value={data.password} onChange={handleChange} />
+        <div className='hidden md:block'>
+          <img className='w-full h-full rounded-2xl shadow-2xl' src="/BannerImage.png" alt="" />
         </div>
-        <button type="submit">Login</button>
-      </form>
-    </>
+      </div>
+    </div>
   )
 }
 
