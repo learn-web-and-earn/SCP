@@ -21,7 +21,9 @@ const Navbar = () => {
   return (
     <div className='w-full h-16 bg-white dark:bg-gray-800 border-b border-gray-300 dark:border-gray-600 shadow-sm flex items-center px-4'>
       <div className='flex justify-between items-center w-full container mx-auto'>
-        <img className='w-40' src="/NavLogo.png" alt="ClipZen" />
+        <Link to="/">
+          <img className='w-40' src="/NavLogo.png" alt="ClipZen" />
+        </Link>
         <div className='flex items-center gap-4'>
           <ThemeSwitcher />
           {user ? (

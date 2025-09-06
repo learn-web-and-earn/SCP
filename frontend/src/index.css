@@ -4,6 +4,25 @@
   font-family: 'TASA Explorer', sans-serif;
 }
 
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes bounce-slower {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-18px); }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2s infinite ease-in-out;
+}
+
+.animate-bounce-slower {
+  animation: bounce-slower 2.5s infinite ease-in-out;
+}
+
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
