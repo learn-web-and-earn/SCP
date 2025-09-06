@@ -1,11 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Check, Play, Coins } from "lucide-react";
 
 const Pricing = () => {
+  const [rate, setRate] = useState(280); // fallback in case API fails
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch live exchange rate
+    fetch("https://api.exchangerate.host/latest?base=USD&symbols=PKR")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.rates && data.rates.PKR) {
+          setRate(data.rates.PKR);
+        }
+      })
+      .catch((err) => console.error("Exchange rate fetch failed:", err))
+      .finally(() => setLoading(false));
+  }, []);
+
   const tiers = [
     {
       name: "Basic",
-      price: "$0",
+      priceUSD: 0,
       videos: "Up to 5 videos/day",
       earning: "Low rewards per video",
       benefits: ["Community Access", "Earn while watching"],
@@ -13,7 +29,7 @@ const Pricing = () => {
     },
     {
       name: "Gold",
-      price: "$9.99/mo",
+      priceUSD: 9.99,
       videos: "Up to 5 videos/day",
       earning: "Higher rewards per video",
       benefits: [
@@ -25,7 +41,7 @@ const Pricing = () => {
     },
     {
       name: "Diamond",
-      price: "$19.99/mo",
+      priceUSD: 19.99,
       videos: "Up to 5 videos/day",
       earning: "Maximum rewards per video",
       benefits: [
@@ -38,7 +54,7 @@ const Pricing = () => {
   ];
 
   return (
-    <section className="container mx-auto my-20 px-6">
+    <section id="pricing" className="container mx-auto my-20 px-6">
       {/* Section Header */}
       <div className="text-center mb-12">
         <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
@@ -52,60 +68,69 @@ const Pricing = () => {
 
       {/* Tier Grid */}
       <div className="grid gap-8 md:grid-cols-3">
-        {tiers.map((tier, index) => (
-          <div
-            key={index}
-            className={`p-8 rounded-2xl shadow-md transition transform hover:scale-105 ${
-              tier.highlight
-                ? "bg-gradient-to-r from-yellow-400 to-yellow-600 text-white shadow-lg"
-                : "bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-            }`}
-          >
-            {/* Tier Name */}
-            <h3 className="text-2xl font-bold mb-2">{tier.name}</h3>
-            <p className="text-4xl font-extrabold mb-6">{tier.price}</p>
-
-            {/* Core Details */}
-            <div className="mb-6 space-y-3">
-              <p className="flex items-center justify-center gap-2">
-                <Play className="w-5 h-5 text-blue-500 dark:text-blue-400" />
-                {tier.videos}
-              </p>
-              <p className="flex items-center justify-center gap-2">
-                <Coins className="w-5 h-5 text-yellow-500 dark:text-yellow-400" />
-                {tier.earning}
-              </p>
-            </div>
-
-            {/* Benefits List */}
-            <ul className="space-y-3 mb-6">
-              {tier.benefits.map((benefit, i) => (
-                <li
-                  key={i}
-                  className="flex items-center justify-center gap-2 text-sm md:text-base"
-                >
-                  <Check
-                    className={`w-5 h-5 ${
-                      tier.highlight ? "text-white" : "text-green-500"
-                    }`}
-                  />
-                  {benefit}
-                </li>
-              ))}
-            </ul>
-
-            {/* CTA Button */}
-            <button
-              className={`w-full px-6 py-3 rounded-xl font-semibold transition ${
+        {tiers.map((tier, index) => {
+          const pricePKR = Math.round(tier.priceUSD * rate);
+          return (
+            <div
+              key={index}
+              className={`p-8 rounded-2xl shadow-md transition transform hover:scale-105 ${
                 tier.highlight
-                  ? "bg-white text-yellow-600 hover:bg-gray-100"
-                  : "bg-yellow-500 text-white hover:bg-yellow-600"
+                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg"
+                  : "bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
               }`}
             >
-              {tier.highlight ? "Go Gold" : "Choose Plan"}
-            </button>
-          </div>
-        ))}
+              {/* Tier Name */}
+              <h3 className="text-2xl font-bold mb-2">{tier.name}</h3>
+              <p className="text-4xl font-extrabold mb-6">
+                {tier.priceUSD === 0
+                  ? "Free"
+                  : loading
+                  ? "Loading..."
+                  : `PKR ${pricePKR.toLocaleString()}/mo`}
+              </p>
+
+              {/* Core Details */}
+              <div className="mb-6 space-y-3">
+                <p className="flex items-center justify-center gap-2">
+                  <Play className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+                  {tier.videos}
+                </p>
+                <p className="flex items-center justify-center gap-2">
+                  <Coins className="w-5 h-5 text-purple-500 dark:text-purple-400" />
+                  {tier.earning}
+                </p>
+              </div>
+
+              {/* Benefits List */}
+              <ul className="space-y-3 mb-6">
+                {tier.benefits.map((benefit, i) => (
+                  <li
+                    key={i}
+                    className="flex items-center justify-center gap-2 text-sm md:text-base"
+                  >
+                    <Check
+                      className={`w-5 h-5 ${
+                        tier.highlight ? "text-white" : "text-green-500"
+                      }`}
+                    />
+                    {benefit}
+                  </li>
+                ))}
+              </ul>
+
+              {/* CTA Button */}
+              <button
+                className={`w-full px-6 py-3 rounded-xl font-semibold transition ${
+                  tier.highlight
+                    ? "bg-white text-blue-600 hover:bg-gray-100"
+                    : "bg-blue-500 text-white hover:bg-blue-600"
+                }`}
+              >
+                {tier.highlight ? "Go Gold" : "Choose Plan"}
+              </button>
+            </div>
+          );
+        })}
       </div>
     </section>
   );
