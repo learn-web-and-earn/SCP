@@ -6,6 +6,13 @@ async function registerUser(req, res) {
   try {
     const { name, email, password } = req.body;
 
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        error: true,
+        message: "All fields are required"
+      });
+    }
+
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -37,7 +44,7 @@ async function registerUser(req, res) {
 
     res.status(201).json({
       error: false,
-      message: "User registered successfully",
+      message: `Welcome ${user.name}! Your account has been created successfully.`,
       user: {
         userId: user._id,
         name: user.name,
@@ -94,7 +101,7 @@ async function loginUser(req, res) {
 
     res.status(200).json({
       error: false,
-      message: "User logged in successfully",
+      message: `Welcome back ${user.name}!`,
       user: {
         userId: user._id,
         name: user.name,
