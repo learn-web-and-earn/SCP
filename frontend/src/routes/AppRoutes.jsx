@@ -1,8 +1,9 @@
+import ExploreLayout from "@/layouts/ExploreLayout";
 import MainLayout from "@/layouts/MainLayout";
 import Login from "@/pages/auth/Login";
 import Register from "@/pages/auth/Register";
-import Home from "@/pages/public/Home";
-import CheckAuth from "@/utils/CheckAuth";
+import Explore from "@/pages/public/explore/Explore";
+import Home from "@/pages/public/home/Home";
 import CheckGuest from "@/utils/CheckGuest";
 import React from "react";
 import { Toaster } from "react-hot-toast";
@@ -10,12 +11,23 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 const router = createBrowserRouter([
   {
+    element: <ExploreLayout />,
+    children: [
+      {
+        path: "/explore",
+        element: (
+          <Explore/>
+        )
+      },
+    ],
+  },
+  {
     element: <MainLayout />, // Navbar is always here
     children: [
       {
         path: "/",
         element: (
-            <Home />
+          <Home />
         ),
       },
       {

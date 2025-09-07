@@ -2,7 +2,7 @@ import React from 'react'
 import { Button } from '../ui/button'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout, setLoggedIn } from '@/store/authSlice'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import ThemeSwitcher from './ThemeSwitcher'
 
 const Navbar = () => {
@@ -24,6 +24,26 @@ const Navbar = () => {
         <Link to="/">
           <img className='w-40' src="/NavLogo.png" alt="ClipZen" />
         </Link>
+        <div className='flex items-center gap-6'>
+          <NavLink
+            to="/explore"
+            className={({ isActive }) => isActive ? 'font-semibold text-blue-500' : 'font-semibold'}>
+            Explore
+          </NavLink>
+          <NavLink
+            to="/contact"
+            className={({ isActive }) => isActive ? 'font-semibold text-blue-500' : 'font-semibold'}>
+            Contact
+          </NavLink>
+
+          <NavLink
+            to="/pricing"
+            className={({ isActive }) => isActive ? 'font-semibold text-blue-500' : 'font-semibold'}>
+            Pricing
+          </NavLink>
+
+        </div>
+
         <div className='flex items-center gap-4'>
           <ThemeSwitcher />
           {user ? (

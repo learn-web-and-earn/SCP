@@ -4,6 +4,15 @@
   font-family: 'TASA Explorer', sans-serif;
 }
 
+/* Hide scrollbar but keep scroll functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE/Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
 @keyframes bounce-slow {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-12px); }
@@ -21,7 +30,6 @@
 .animate-bounce-slower {
   animation: bounce-slower 2.5s infinite ease-in-out;
 }
-
 
 @import "tailwindcss";
 @import "tw-animate-css";
