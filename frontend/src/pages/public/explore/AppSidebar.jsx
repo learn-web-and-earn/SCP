@@ -18,7 +18,6 @@ import { Link, NavLink } from "react-router-dom"
 const items = [
   { title: "Home", url: "/explore", icon: Home },
   { title: "Search", url: "/search", icon: Search },
-  { title: "Settings", url: "/settings", icon: Settings },
 ]
 
 export default function AppSidebar() {

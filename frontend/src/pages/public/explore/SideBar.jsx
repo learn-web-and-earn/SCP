@@ -32,7 +32,7 @@ export default function Layout({ children }) {
           {children}
 
           {/* Top Right User/Theme Section */}
-          <div className="absolute top-4 right-4 flex items-center gap-4">
+          <div className="hidden absolute top-4 right-4 lg:flex items-center gap-4">
             <ThemeSwitcher />
             {user ? (
               <div className="flex items-center gap-2">

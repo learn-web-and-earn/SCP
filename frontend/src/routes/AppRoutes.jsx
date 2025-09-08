@@ -1,3 +1,4 @@
+import LoadingBar from "@/components/custom/LoadingBar";
 import ExploreLayout from "@/layouts/ExploreLayout";
 import MainLayout from "@/layouts/MainLayout";
 import Login from "@/pages/auth/Login";
@@ -7,6 +8,7 @@ import Home from "@/pages/public/home/Home";
 import CheckGuest from "@/utils/CheckGuest";
 import React from "react";
 import { Toaster } from "react-hot-toast";
+import { useSelector } from "react-redux";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -51,8 +53,12 @@ const router = createBrowserRouter([
 ]);
 
 const AppRoutes = () => {
+
+  const loading = useSelector((state) => state.auth.loading);
+
   return (
     <>
+      <LoadingBar loading={loading} />
       <RouterProvider router={router} />
       <Toaster position="top-right" reverseOrder={false} />
     </>

@@ -1,23 +1,53 @@
-import { Heart, MessageSquare, Share2 } from "lucide-react";
+import { setLoading } from "@/store/authSlice";
+import { setMuted, setVideos } from "@/store/video.store";
+import {
+  Heart,
+  MessageSquare,
+  Share2,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
-
-const videos = [
-  { id: 1, src: "/Video1.mp4", caption: "Clip 1", likes: 120, comments: 45, shares: 12 },
-  { id: 2, src: "/Video2.mp4", caption: "Clip 2", likes: 89, comments: 30, shares: 7 },
-  { id: 3, src: "/Video3.mp4", caption: "Clip 3", likes: 200, comments: 90, shares: 25 },
-];
+import { useDispatch, useSelector } from "react-redux";
 
 const VideoPlayer = () => {
   const videoRefs = useRef([]);
+  const videos = useSelector((state) => state.video.videos); // ✅ guard
+  const isMuted = useSelector((state) => state.video.isMuted);
+  const loading = useSelector((state) => state.auth.loading);
+
+  const dispatch = useDispatch();
   const [videoOrientations, setVideoOrientations] = useState({});
 
+  // Fetch videos from API
   useEffect(() => {
+    const fetchVideos = async () => {
+      dispatch(setLoading(true));
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API}/item/getAll`);
+        const data = await res.json();
+        dispatch(setVideos(data.items || []));
+      } catch (error) {
+        console.error("Error fetching videos:", error);
+        dispatch(setVideos([])); // ✅ ensure safe fallback
+      } finally {
+        dispatch(setLoading(false));
+      }
+    };
+
+    fetchVideos();
+  }, [dispatch]);
+
+  // Play/Pause based on intersection
+  useEffect(() => {
+    if (videos.length === 0) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           const video = entry.target;
           if (entry.isIntersecting) {
-            video.currentTime = 0; // restart from beginning
+            video.currentTime = 0;
             video.play().catch(() => { });
           } else {
             video.pause();
@@ -27,16 +57,24 @@ const VideoPlayer = () => {
       { threshold: 0.7 }
     );
 
-    videoRefs.current.forEach((video) => {
+    const currentVideos = videoRefs.current;
+    currentVideos.forEach((video) => {
       if (video) observer.observe(video);
     });
 
     return () => {
-      videoRefs.current.forEach((video) => {
+      currentVideos.forEach((video) => {
         if (video) observer.unobserve(video);
       });
     };
-  }, []);
+  }, [videos]);
+
+  // Sync Redux mute state with DOM video elements
+  useEffect(() => {
+    videoRefs.current.forEach((video) => {
+      if (video) video.muted = isMuted;
+    });
+  }, [isMuted]);
 
   const handleLoadedMetadata = (index, e) => {
     const video = e.target;
@@ -48,55 +86,72 @@ const VideoPlayer = () => {
   };
 
   return (
-    <div className="h-screen w-full flex justify-center items-center bg-gray-100 dark:bg-gray-900">
+    <div className="h-screen w-full flex justify-center items-center bg-gray-100 dark:bg-gray-900 relative">
+
       {/* Scrollable video feed */}
       <div className="h-full w-full md:w-[380px] md:h-[600px] bg-black rounded-2xl overflow-y-scroll snap-y snap-mandatory shadow-lg no-scrollbar">
-        {videos.map((video, index) => (
+        {(videos || []).map((video, index) => (
           <div
-            key={video.id}
+            key={video._id || index}
             className="h-full w-full flex items-center justify-center snap-start relative cursor-pointer"
           >
             <video
               ref={(el) => (videoRefs.current[index] = el)}
-              src={video.src}
+              src={video.video}
               className={`rounded-2xl ${videoOrientations[index] === "landscape"
                 ? "w-full h-auto object-contain"
                 : "h-full w-full object-cover"
                 }`}
               loop
-              muted
+              muted={isMuted}
               playsInline
               onLoadedMetadata={(e) => handleLoadedMetadata(index, e)}
             />
 
             {/* Overlay: caption */}
             <div className="absolute bottom-16 left-4 text-white">
-              <p className="text-lg font-semibold">{video.caption}</p>
+              <p className="text-lg font-semibold">{video.name}</p>
             </div>
 
-            {/* Overlay: actions with counts */}
+            {/* Overlay: actions */}
             <div className="absolute bottom-16 right-4 flex flex-col gap-4 items-center text-white">
               <div className="flex flex-col items-center">
                 <button className="p-2 bg-white/20 rounded-full">
                   <Heart size={16} />
                 </button>
-                <span className="text-sm">{video.likes}</span>
+                <span className="text-sm">{video.likes || 0}</span>
               </div>
               <div className="flex flex-col items-center">
                 <button className="p-2 bg-white/20 rounded-full">
                   <MessageSquare size={16} />
                 </button>
-                <span className="text-sm">{video.comments}</span>
+                <span className="text-sm">{video.comments || 0}</span>
               </div>
               <div className="flex flex-col items-center">
                 <button className="p-2 bg-white/20 rounded-full">
                   <Share2 size={16} />
                 </button>
-                <span className="text-sm">{video.shares}</span>
+                <span className="text-sm">{video.shares || 0}</span>
               </div>
             </div>
+
+            {/* Global mute/unmute button */}
+            <button
+              onClick={() => dispatch(setMuted())}
+              className="absolute top-4 right-4 p-2 bg-black/40 rounded-full text-white"
+            >
+              {isMuted ? (
+                <VolumeX size={20} className="cursor-pointer" />
+              ) : (
+                <Volume2 size={20} className="cursor-pointer" />
+              )}
+            </button>
           </div>
         ))}
+
+        {videos.length === 0 && !loading && (
+          <p className="text-center text-gray-400 mt-10">No videos available</p>
+        )}
       </div>
     </div>
   );

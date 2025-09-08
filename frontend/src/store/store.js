@@ -13,6 +13,7 @@ import storage from 'redux-persist/lib/storage';
 
 import themeStore from "./themeStore" 
 import authSlice from './authSlice';
+import videoStore from './video.store';
 
 const persistConfig = {
   key: 'root',
@@ -22,7 +23,8 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   theme: themeStore,
-  auth: authSlice
+  auth: authSlice,
+  video: videoStore,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
