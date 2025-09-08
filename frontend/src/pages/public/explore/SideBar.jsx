@@ -36,14 +36,16 @@ export default function Layout({ children }) {
             <ThemeSwitcher />
             {user ? (
               <div className="flex items-center gap-2">
-                <Avatar>
-                  {user.Avatar ? (
-                    <AvatarImage src={user.Avatar} alt={user.name} />
-                  ) : (
-                    <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
-                  )}
-                </Avatar>
-                <span className="text-sm font-medium">{user.name}</span>
+                <Link className="flex items-center gap-2" to={`/profile/${user.userId}`}>
+                  <Avatar>
+                    {user.Avatar ? (
+                      <AvatarImage src={user.Avatar} alt={user.name} />
+                    ) : (
+                      <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                    )}
+                  </Avatar>
+                  <span className="text-sm font-medium">{user.name}</span>
+                </Link>
               </div>
             ) : (
               <div className="flex gap-2">

@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { setLoading } from "@/store/authSlice";
 import { setMuted, setVideos } from "@/store/video.store";
 import {
@@ -9,6 +10,7 @@ import {
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const VideoPlayer = () => {
   const videoRefs = useRef([]);
@@ -109,9 +111,13 @@ const VideoPlayer = () => {
             />
 
             {/* Overlay: caption */}
-            <div className="absolute bottom-16 left-4 text-white">
-              <p className="text-lg font-semibold">{video.name}</p>
-            </div>
+            <Link to={`/profile/${video.User._id}`} className="absolute bottom-16 left-4 text-white flex items-center gap-2">
+              <Avatar>
+                <AvatarImage src={video.User.avatar} />
+                <AvatarFallback>{video.User.name[0]}</AvatarFallback>
+              </Avatar>
+              <p className="text-lg font-semibold">{video.User.name}</p>
+            </Link>
 
             {/* Overlay: actions */}
             <div className="absolute bottom-16 right-4 flex flex-col gap-4 items-center text-white">

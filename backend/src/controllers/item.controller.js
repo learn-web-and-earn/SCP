@@ -35,7 +35,7 @@ const createItem = async (req, res) => {
 
 const getItems = async (_, res) => {
   try {
-    const items = await Item.find();
+    const items = await Item.find().populate("User", "name email");
     res.status(200).json({
       error: false,
       message: "Items fetched successfully",
