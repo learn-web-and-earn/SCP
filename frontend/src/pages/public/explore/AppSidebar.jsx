@@ -1,9 +1,8 @@
-import { Home, PlayCircle, Search, Settings } from "lucide-react"
+import { Home, PlayCircle, Search } from "lucide-react"
 
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -67,21 +66,6 @@ export default function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <button
-                  className="flex items-center gap-2 px-3 py-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 w-full"
-                  onClick={() => alert("Settings clicked!")}
-                >
-                  <Settings className="w-5 h-5" />
-                  {open && <span>Settings</span>}
-                </button>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarFooter>
     </Sidebar>
   )
 }

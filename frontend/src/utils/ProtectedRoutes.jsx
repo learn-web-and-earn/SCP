@@ -11,7 +11,7 @@ const ProtectedRoutes = ({ children }) => {
 
   if (!user.isAdmin) {
     toast.error("Only admin can access this page");
-    return <Navigate to="/" />; // Redirect to home page
+    return <Navigate to="/explore" />; // Redirect to home page
   }
 
   return children;

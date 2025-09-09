@@ -1,17 +1,33 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import AppSidebar from "./AppSidebar";
 import ThemeSwitcher from "@/components/custom/ThemeSwitcher";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { LogOut, User as UserIcon } from "lucide-react";
+import { logout } from "@/store/authSlice"; // 👈 adjust if your slice exports logout
 
 export default function Layout({ children }) {
   const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Helper: first 2 letters
   const getInitials = (name) => {
     if (!name) return "";
     return name.slice(0, 2).toUpperCase();
+  };
+
+  const handleLogout = () => {
+    dispatch(logout()); // clear redux state
+    navigate("/login"); // redirect
   };
 
   return (
@@ -24,29 +40,45 @@ export default function Layout({ children }) {
 
         {/* Main Content */}
         <main className="flex-1 flex justify-center items-center relative">
-          {/* Absolute Sidebar Trigger (only on mobile) */}
-          <div className="absolute top-4 left-4 md:hidden z-50">
-            <SidebarTrigger className="p-2 rounded-lg bg-white dark:bg-gray-800 shadow-md" />
-          </div>
-
           {children}
 
           {/* Top Right User/Theme Section */}
           <div className="hidden absolute top-4 right-4 lg:flex items-center gap-4">
             <ThemeSwitcher />
             {user ? (
-              <div className="flex items-center gap-2">
-                <Link className="flex items-center gap-2" to={`/profile/${user.userId}`}>
-                  <Avatar>
-                    {user.Avatar ? (
-                      <AvatarImage src={user.Avatar} alt={user.name} />
-                    ) : (
-                      <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
-                    )}
-                  </Avatar>
-                  <span className="text-sm font-medium">{user.name}</span>
-                </Link>
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button>
+                    <Avatar>
+                      {user.Avatar ? (
+                        <AvatarImage src={user.Avatar} alt={user.name} />
+                      ) : (
+                        <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+                      )}
+                    </Avatar>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="w-40 bg-white dark:bg-gray-800 shadow-lg rounded-lg"
+                >
+                  <DropdownMenuItem
+                    onClick={() => navigate(`/profile/${user.userId}`)}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
+                    <UserIcon size={16} />
+                    Profile
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 cursor-pointer"
+                  >
+                    <LogOut size={16} />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <div className="flex gap-2">
                 <Link

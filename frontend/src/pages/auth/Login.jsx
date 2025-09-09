@@ -43,7 +43,7 @@ const Login = () => {
       dispatch(setToken(res.token));
       localStorage.setItem("token", res.token);
       localStorage.setItem("user", JSON.stringify(res.user));
-      navigate("/");
+      navigate("/explore");
 
     } catch (err) {
       toast.error(err.message);
