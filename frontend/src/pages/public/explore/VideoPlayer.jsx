@@ -213,7 +213,7 @@ const VideoPlayer = () => {
           >
             <video
               ref={(el) => (videoRefs.current[index] = el)}
-              src={video.video}
+              src={video.videoUrl}
               className={`rounded-2xl ${videoOrientations[index] === "landscape"
                   ? "w-full h-auto object-contain"
                   : "h-full w-full object-cover"
@@ -242,7 +242,7 @@ const VideoPlayer = () => {
               max="100"
               value={progress[index] || 0}
               onChange={(e) => handleSeek(index, e)}
-              className="absolute bottom-16 md:bottom-2 left-0 w-full h-1 accent-red-500 cursor-pointer z-50"
+              className="absolute bottom-15 md:bottom-1 left-0 w-full h-1 accent-red-500 cursor-pointer z-50"
             />
 
             {/* Play overlay when paused */}

@@ -11,11 +11,10 @@ const createItem = async (req, res) => {
 
     const fileuploadResult = await uploadFile(req.file.buffer, uuid());
 
-
     const item = await Item.create({
       name,
       description,
-      video: fileuploadResult.url,
+      videoUrl: fileuploadResult.url,
       User: userId,
     });
     res.status(201).json({
@@ -35,7 +34,7 @@ const createItem = async (req, res) => {
 
 const getItems = async (_, res) => {
   try {
-    const items = await Item.find().populate("User", "name email");
+    const items = await Item.find().populate("User", "name email").sort({ createdAt: -1 });
     res.status(200).json({
       error: false,
       message: "Items fetched successfully",
@@ -64,9 +63,9 @@ const getItem = async (req, res) => {
     res.status(500).json({
       error: true,
       message: "Internal server error"
-    }) 
+    })
   }
- };
+};
 
 const updateItem = async (req, res) => { };
 

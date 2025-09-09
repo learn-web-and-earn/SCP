@@ -9,7 +9,7 @@ const itemSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  video:{
+  videoUrl:{
     type: String,
     required: true
   },
